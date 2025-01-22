@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import Contact from './models/Contact.js';
+import leadRoutes from './routes/leadRoutes.js';
 
 dotenv.config();
 
@@ -12,24 +13,29 @@ const app = express();
 connectDB();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: ['http://localhost:5173', 'https://elite-tech.vercel.app'],
+    methods: ['GET', 'POST', 'PATCH'],
+    allowedHeaders: ['Content-Type']
+}));
 app.use(express.json());
 
 // Routes
+app.use('/api', leadRoutes);
+
 app.post('/api/contact', async (req, res) => {
     try {
         const contact = new Contact(req.body);
         await contact.save();
         res.status(201).json({
-            success: true,
-            data: contact,
-            message: 'Solicitud enviada correctamente'
+            message: 'Mensaje enviado correctamente',
+            contact
         });
     } catch (error) {
+        console.error('Error al guardar el contacto:', error);
         res.status(400).json({
-            success: false,
-            message: error.message,
-            errors: error.errors
+            error: 'Error al enviar el mensaje',
+            message: error.message
         });
     }
 });
@@ -51,5 +57,5 @@ app.get('/api/contact', async (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Servidor corriendo en puerto ${PORT}`);
 });
