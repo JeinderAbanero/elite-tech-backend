@@ -14,9 +14,14 @@ connectDB();
 
 // Middleware
 app.use(cors({
-    origin: ['http://localhost:5173', 'https://elite-tech.vercel.app'],
-    methods: ['GET', 'POST', 'PATCH'],
-    allowedHeaders: ['Content-Type']
+    origin: [
+        'http://localhost:5173',
+        'https://elite-tech.vercel.app',
+        'https://elite-tech-eight.vercel.app'
+    ],
+    methods: ['GET', 'POST', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
 }));
 app.use(express.json());
 
